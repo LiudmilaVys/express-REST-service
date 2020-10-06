@@ -1,9 +1,43 @@
 const usersRepo = require('./user.memory.repository');
+const User = require('./user.model');
 
 const getAll = async () => usersRepo.getAll();
+
 const getById = async id => usersRepo.getById(id);
+
+const create = async userData => {
+  const user = new User({
+    name: userData.name,
+    login: userData.login,
+    password: userData.password
+  });
+  usersRepo.save(user);
+  return user;
+};
+
+const update = (userId, userData) => {
+  const user = usersRepo.getById(userId);
+  user.name = userData.name;
+  user.login = userData.login;
+  user.password = userData.password;
+  usersRepo.update(user);
+  return user;
+};
+
+const remove = userId => {
+  usersRepo.remove(userId);
+};
+
+const alreadyExists = userName => {
+  const user = usersRepo.findByName(userName);
+  return !!user;
+};
 
 module.exports = {
   getAll,
-  getById
+  getById,
+  create,
+  update,
+  remove,
+  alreadyExists
 };
