@@ -8,8 +8,8 @@ class Board {
   }
 
   static toResponse(board) {
-    const { id, title } = board;
-    return { id, name };
+    const { id, title, columns } = board;
+    return { id, title, columns };
   }
 }
 
