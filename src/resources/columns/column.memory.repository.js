@@ -1,13 +1,6 @@
-const uuid = require('uuid');
-const Column = require('./column.model');
+// const uuid = require('uuid');
+// const Column = require('./column.model');
 
-const getAll = async () => {
-  const columns = [];
-  for(let i=0; i<2;i++){
-    const user = new Column({ uuid(), `column${i}`, i });
-    columns.push(user);
-  }
-  return users;
-};
+// const getAll = async () => columns.slice(0, columns.length);
 
-module.exports = { getAll };
+// module.exports = { getAll };

@@ -1,24 +1,12 @@
 const uuid = require('uuid');
+const db = require('../../db');
 const User = require('./user.model');
 
-const users = [];
-for (let i = 0; i < 10; i++) {
-  const user = new User({
-    id: uuid(),
-    name: `USER${i}`,
-    login: `user${i}`,
-    password: `P@55w0rd${i}`
-  });
-  users.push(user);
-}
+const getAll = () => db.users.slice(0, db.users.length);
 
-const getAll = () => users.slice(0, users.length);
+const getById = id => db.users.filter(user => user.id == id)[0];
 
-const getById = id => {
-  return users.filter(user => user.id == id)[0];
-};
-
-const save = user => users.push(user);
+const save = user => db.users.push(user);
 
 const update = user => {
   const existingUser = getById(user.id);
@@ -27,16 +15,14 @@ const update = user => {
 
 const remove = id => {
   const existingUser = getById(id);
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].id == existingUser.id) {
-      users.splice(i, 1);
+  for (let i = 0; i < db.users.length; i++) {
+    if (db.users[i].id == existingUser.id) {
+      db.users.splice(i, 1);
     }
   }
 };
 
-const findByName = name => {
-  return users.filter(user => user.name == name)[0];
-};
+const findByName = name => db.users.filter(user => user.name == name)[0];
 
 module.exports = {
   getAll,

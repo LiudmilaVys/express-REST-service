@@ -1,5 +1,5 @@
-const columnsRepo = require('./column.memory.repository');
+// const columnsRepo = require('./column.memory.repository');
 
-const getAll = () => columnsRepo.getAll();
+// const getAll = () => columnsRepo.getAll();
 
-module.exports = { getAll };
+// module.exports = { getAll };

@@ -1,21 +1,31 @@
 const uuid = require('uuid');
+const db = require('../../db');
 const Task = require('./task.model');
 
-const getAll = async () => {
-  const tasks = [];
-  for (let i = 0; i < 15; i++) {
-    const task = new Task({
-      id: uuid(),
-      title: `task${i}`,
-      order: i,
-      description: `about task${i}`,
-      userId: uuid(),
-      boardId: uuid(),
-      columnId: uuid()
-    });
-    tasks.push(task);
-  }
-  return tasks;
+const getAll = async () => db.tasks.slice(0, db.tasks.length);
+
+const getById = id => db.tasks.filter(task => task.id == id)[0];
+
+const save = task => db.tasks.push(task);
+
+const update = task => {
+  const existingTask = getById(task.id);
+  Object.assign(existingTask, task);
 };
 
-module.exports = { getAll };
+const remove = id => {
+  const existingTask = getById(id);
+  for (let i = 0; i < db.tasks.length; i++) {
+    if (db.tasks[i].id == existingTask.id) {
+      db.tasks.splice(i, 1);
+    }
+  }
+};
+
+module.exports = {
+  getAll,
+  getById,
+  save,
+  update,
+  remove
+};

@@ -26,16 +26,10 @@ const remove = boardId =>{
   boardsRepo.remove(boardId);
 };
 
-const alreadyExists = boardTitle => {
-  const board = boardsRepo.findByTitle(boardTitle);
-  return !!board;
-};
-
 module.exports = {
   getAll,
   getById,
   create,
   update,
-  remove,
-  alreadyExists
+  remove
 };
