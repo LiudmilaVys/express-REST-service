@@ -23,37 +23,32 @@ router
   .get(async (req, res) => {
     const boardId = req.params.id;
     const board = await boardsService.getById(boardId);
-
-    if (board) {
-      res.json(Board.toResponse(board));
-    } else {
-      res.status(404).send(messages.notFound);
-    }
+    res.json(Board.toResponse(board));
   })
-  .put(async (req, res) => {
+  .put((req, res) => {
     const boardId = req.params.id;
-    const board = await boardsService.getById(boardId);
+    const boardData = req.body;
+    validateBoard(boardData, res);
 
-    if (board) {
-      const boardData = req.body;
-      validateBoard(boardData, res);
-
-      const freshBoard = boardsService.update(boardId, boardData);
-      res.json(Board.toResponse(freshBoard));
-    } else {
-      res.status(404).send(messages.notFound);
-    }
+    const freshBoard = boardsService.update(boardId, boardData);
+    res.json(Board.toResponse(freshBoard));
   })
-  .delete(async (req, res) => {
+  .delete((req, res) => {
     const boardId = req.params.id;
-    const board = await boardsService.getById(boardId);
-
-    if (board) {
-      boardsService.remove(boardId);
-      res.end();
-    } else {
-      res.status(404).send(messages.notFound);
-    }
+    boardsService.remove(boardId);
+    res.end();
   });
+
+router.param('id', async (req, res, next, id) => {
+  if (!id) {
+    res.status(404).send(messages.idRequired);
+  }
+
+  const board = await boardsService.getById(id);
+  if (!board) {
+    res.status(404).send(messages.notFound);
+  }
+  next();
+});
 
 module.exports = router;

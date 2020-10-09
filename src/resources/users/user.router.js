@@ -25,37 +25,33 @@ router
     const userId = req.params.id;
     const user = await usersService.getById(userId);
 
-    if (user) {
-      // map user fields to exclude secret fields like "password"
-      res.json(User.toResponse(user));
-    } else {
-      res.status(404).send(messages.notFound);
-    }
+    // map user fields to exclude secret fields like "password"
+    res.json(User.toResponse(user));
   })
-  .put(async (req, res) => {
+  .put((req, res) => {
     const userId = req.params.id;
-    const user = await usersService.getById(userId);
+    const userData = req.body;
+    validateUser(userData, res);
 
-    if (user) {
-      const userData = req.body;
-      validateUser(userData, res);
-
-      const freshUser = usersService.update(userId, userData);
-      res.json(User.toResponse(freshUser));
-    } else {
-      res.status(404).send(messages.notFound);
-    }
+    const freshUser = usersService.update(userId, userData);
+    res.json(User.toResponse(freshUser));
   })
-  .delete(async (req, res) => {
+  .delete((req, res) => {
     const userId = req.params.id;
-    const user = await usersService.getById(userId);
-
-    if (user) {
-      usersService.remove(userId);
-      res.end();
-    } else {
-      res.status(404).send(messages.notFound);
-    }
+    usersService.remove(userId);
+    res.end();
   });
+
+router.param('id', async (req, res, next, id) => {
+  if (!id) {
+    res.status(404).send(messages.idRequired);
+  }
+
+  const user = await usersService.getById(id);
+  if (!user) {
+    res.status(404).send(messages.notFound);
+  }
+  next();
+});
 
 module.exports = router;
