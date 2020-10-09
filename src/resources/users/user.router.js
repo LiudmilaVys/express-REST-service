@@ -6,24 +6,24 @@ const messages = require('./user.messages');
 
 router
   .route('/')
-  .get(async (req, res) => {
-    const users = await usersService.getAll();
+  .get((req, res) => {
+    const users = usersService.getAll();
     // map user fields to exclude secret fields like "password"
     res.json(users.map(User.toResponse));
   })
-  .post(async (req, res) => {
+  .post((req, res) => {
     const userData = req.body;
     validateUser(userData, res);
 
-    const user = await usersService.create(userData);
+    const user = usersService.create(userData);
     res.json(User.toResponse(user));
   });
 
 router
   .route('/:id')
-  .get(async (req, res) => {
+  .get((req, res) => {
     const userId = req.params.id;
-    const user = await usersService.getById(userId);
+    const user = usersService.getById(userId);
 
     // map user fields to exclude secret fields like "password"
     res.json(User.toResponse(user));
@@ -42,16 +42,17 @@ router
     res.end();
   });
 
-router.param('id', async (req, res, next, id) => {
+router.param('id', (req, res, next, id) => {
   if (!id) {
     res.status(404).send(messages.idRequired);
   }
 
-  const user = await usersService.getById(id);
+  const user = usersService.getById(id);
   if (!user) {
     res.status(404).send(messages.notFound);
+  } else {
+    next();
   }
-  next();
 });
 
 module.exports = router;

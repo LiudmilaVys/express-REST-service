@@ -2,7 +2,7 @@ const uuid = require('uuid');
 const db = require('../../db');
 const Task = require('./task.model');
 
-const getAll = async () => db.tasks.slice(0, db.tasks.length);
+const getAll = boardId => db.tasks.filter(task => task.boardId == boardId);
 
 const getById = id => db.tasks.filter(task => task.id == id)[0];
 
@@ -22,10 +22,24 @@ const remove = id => {
   }
 };
 
+const removeByBoardId = boardId => {
+  db.tasks = db.tasks.filter(task => task.boardId != boardId);
+};
+
+const removeUser = userId => {
+  for (let i = 0; i < db.tasks.length; i++) {
+    if (db.tasks[i].userId == userId) {
+      db.tasks[i].userId = null;
+    }
+  }
+};
+
 module.exports = {
   getAll,
   getById,
   save,
   update,
-  remove
+  remove,
+  removeByBoardId,
+  removeUser
 };

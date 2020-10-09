@@ -1,11 +1,12 @@
 const usersRepo = require('./user.memory.repository');
 const User = require('./user.model');
+const tasksService = require('../tasks/task.service');
 
-const getAll = async () => usersRepo.getAll();
+const getAll = () => usersRepo.getAll();
 
-const getById = async id => usersRepo.getById(id);
+const getById = id => usersRepo.getById(id);
 
-const create = async userData => {
+const create = userData => {
   const user = new User({
     name: userData.name,
     login: userData.login,
@@ -26,6 +27,7 @@ const update = (userId, userData) => {
 
 const remove = userId => {
   usersRepo.remove(userId);
+  tasksService.removeUser(userId);
 };
 
 const alreadyExists = userName => {

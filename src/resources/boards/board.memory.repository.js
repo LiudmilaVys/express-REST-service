@@ -2,7 +2,7 @@ const uuid = require('uuid');
 const db = require('../../db');
 const Board = require('./board.model');
 
-const getAll = async () => db.boards.slice(0, db.boards.length);
+const getAll = () => db.boards.slice(0, db.boards.length);
 
 const getById = id => db.boards.filter(board => board.id == id)[0];
 

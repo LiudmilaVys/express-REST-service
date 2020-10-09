@@ -3,27 +3,29 @@ const Task = require('./task.model');
 const tasksService = require('./task.service');
 const validateTask = require('./task.validator');
 const messages = require('./task.messages');
+const boardsService = require('../boards/board.service');
+const boardsMessages = require('../boards/board.messages');
 
 router
   .route('/:boardId/tasks')
-  .get(async (req, res) => {
+  .get((req, res) => {
     const boardId = req.params.boardId;
-    const tasks = await tasksService.getAll(boardId);
+    const tasks = tasksService.getAll(boardId);
     res.json(tasks.map(Task.toResponse));
   })
-  .post(async (req, res) => {
+  .post((req, res) => {
     const taskData = req.body;
     validateTask(taskData, res);
 
-    const task = await tasksService.create(taskData);
+    const task = tasksService.create(taskData);
     res.json(Task.toResponse(task));
   });
 
 router
   .route('/:boardId/tasks/:id')
-  .get(async (req, res) => {
+  .get((req, res) => {
     const taskId = req.params.id;
-    const task = await tasksService.getById(taskId);
+    const task = tasksService.getById(taskId);
     res.json(Task.toResponse(task));
   })
   .put((req, res) => {
@@ -40,16 +42,30 @@ router
     res.end();
   });
 
-router.param('id', async (req, res, next, id) => {
+router.param('boardId', (req, res, next, boardId) => {
+  if (!boardId) {
+    res.status(404).send(boardsMessages.idRequired);
+  }
+
+  const board = boardsService.getById(boardId);
+  if (!board) {
+    res.status(404).send(boardsMessages.notFound);
+  } else {
+    next();
+  }
+});
+
+router.param('id', (req, res, next, id) => {
   if (!id) {
     res.status(404).send(messages.idRequired);
   }
 
-  const task = await tasksService.getById(id);
+  const task = tasksService.getById(id);
   if (!task) {
     res.status(404).send(messages.notFound);
+  } else {
+    next();
   }
-  next();
 });
 
 module.exports = router;

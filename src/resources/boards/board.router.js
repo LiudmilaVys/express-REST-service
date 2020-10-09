@@ -6,23 +6,23 @@ const messages = require('./board.messages');
 
 router
   .route('/')
-  .get(async (req, res) => {
-    const boards = await boardsService.getAll();
+  .get((req, res) => {
+    const boards = boardsService.getAll();
     res.json(boards.map(Board.toResponse));
   })
-  .post(async (req, res) => {
+  .post((req, res) => {
     const boardData = req.body;
     validateBoard(boardData, res);
 
-    const board = await boardsService.create(boardData);
+    const board = boardsService.create(boardData);
     res.json(Board.toResponse(board));
   });
 
 router
   .route('/:id')
-  .get(async (req, res) => {
+  .get((req, res) => {
     const boardId = req.params.id;
-    const board = await boardsService.getById(boardId);
+    const board = boardsService.getById(boardId);
     res.json(Board.toResponse(board));
   })
   .put((req, res) => {
@@ -39,16 +39,17 @@ router
     res.end();
   });
 
-router.param('id', async (req, res, next, id) => {
+router.param('id', (req, res, next, id) => {
   if (!id) {
     res.status(404).send(messages.idRequired);
   }
 
-  const board = await boardsService.getById(id);
+  const board = boardsService.getById(id);
   if (!board) {
     res.status(404).send(messages.notFound);
+  } else {
+    next();
   }
-  next();
 });
 
 module.exports = router;

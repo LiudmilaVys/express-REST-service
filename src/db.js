@@ -27,7 +27,7 @@ const init = () => {
         
         for (let l = 0; l < 5; l++) {
           const task = new Task({
-            title: `task${k}${k}}`,
+            title: `task${k}${k}`,
             order: l,
             description: `about task${l}`,
             userId: user.id,

@@ -1,11 +1,12 @@
 const boardsRepo = require('./board.memory.repository');
 const Board = require('./board.model');
+const tasksService = require('../tasks/task.service');
 
 const getAll = () => boardsRepo.getAll();
 
-const getById = async id => boardsRepo.getById(id);
+const getById = id => boardsRepo.getById(id);
 
-const create = async boardData => {
+const create = boardData => {
   const board = new Board({
     title: boardData.title,
     columns: boardData.columns
@@ -22,8 +23,9 @@ const update = (boardId, boardData) => {
   return board;
 };
 
-const remove = boardId =>{
+const remove = boardId => {
   boardsRepo.remove(boardId);
+  tasksService.removeByBoardId(boardId);
 };
 
 module.exports = {

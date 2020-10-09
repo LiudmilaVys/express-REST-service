@@ -3,7 +3,7 @@ const Task = require('./task.model');
 
 const getAll = boardId => tasksRepo.getAll(boardId);
 
-const create = async taskData => {
+const create = taskData => {
   const task = new Task({
     title: taskData.title,
     order: taskData.order,
@@ -16,7 +16,7 @@ const create = async taskData => {
   return task;
 };
 
-const getById = async id => tasksRepo.getById(id);
+const getById = id => tasksRepo.getById(id);
 
 const update = (id, taskData) => {
   const task = tasksRepo.getById(id);
@@ -30,14 +30,18 @@ const update = (id, taskData) => {
   return task;
 };
 
-const remove = id =>{
-  tasksRepo.remove(id);
-};
+const remove = id => tasksRepo.remove(id);
+
+const removeByBoardId = boardId => tasksRepo.removeByBoardId(boardId);
+
+const removeUser = userId => tasksRepo.removeUser(userId);
 
 module.exports = {
   getAll,
   create,
   getById,
   update,
-  remove
+  remove,
+  removeByBoardId,
+  removeUser
 };
