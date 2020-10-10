@@ -14,7 +14,9 @@ router
     res.json(tasks.map(Task.toResponse));
   })
   .post((req, res) => {
+    const boardId = req.params.boardId;
     const taskData = req.body;
+    taskData.boardId = boardId;
     validateTask(taskData, res);
 
     const task = tasksService.create(taskData);
