@@ -1,13 +1,14 @@
-const router = require('express').Router();
+const router = require('express').Router({ mergeParams: true });
+const boardRouter = require('../boards/board.router');
 const Task = require('./task.model');
 const tasksService = require('./task.service');
 const validateTask = require('./task.validator');
 const messages = require('./task.messages');
-const boardsService = require('../boards/board.service');
-const boardsMessages = require('../boards/board.messages');
+
+boardRouter.use('/:boardId/tasks', router);
 
 router
-  .route('/:boardId/tasks')
+  .route('/')
   .get((req, res) => {
     const boardId = req.params.boardId;
     const tasks = tasksService.getAll(boardId);
@@ -24,7 +25,7 @@ router
   });
 
 router
-  .route('/:boardId/tasks/:id')
+  .route('/:id')
   .get((req, res) => {
     const taskId = req.params.id;
     const task = tasksService.getById(taskId);
@@ -43,19 +44,6 @@ router
     tasksService.remove(taskId);
     res.end();
   });
-
-router.param('boardId', (req, res, next, boardId) => {
-  if (!boardId) {
-    res.status(404).send(boardsMessages.idRequired);
-  }
-
-  const board = boardsService.getById(boardId);
-  if (!board) {
-    res.status(404).send(boardsMessages.notFound);
-  } else {
-    next();
-  }
-});
 
 router.param('id', (req, res, next, id) => {
   if (!id) {
