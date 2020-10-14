@@ -1,16 +1,19 @@
 const winston = require('winston');
+const DailyRotateFile = require('winston-daily-rotate-file');
 
+
+// DailyRotateFile requires file system permissions to create files
 const logger = winston.createLogger({
-  level: 'silly',
-  format: winston.format.combine(
-    winston.format.colorize(),
-    winston.format.cli()
-  ),
   transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({
+    new DailyRotateFile({
+      level: 'info',
+      filename: 'info-%DATE%.log',
+      datePattern: 'MM-DD-YYYY'
+    }),
+    new DailyRotateFile({
       level: 'error',
-      filename: 'error.log',
+      filename: 'error-%DATE%.log',
+      datePattern: 'MM-DD-YYYY',
       format: winston.format.combine(
         winston.format.uncolorize(),
         winston.format.json()
