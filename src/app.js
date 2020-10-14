@@ -6,6 +6,7 @@ const db = require('./db');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
 const userRouter = require('./resources/users/user.router');
+const logger = require('./common/logger');
 
 db.init();
 
@@ -13,6 +14,18 @@ const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+  const { method, url, query, body } = req;
+  logger.info(
+    `---> Method: ${method}, URL: ${url}, query: ${JSON.stringify(query)}, body: ${JSON.stringify(body)} <---`,
+    method,
+    url,
+    query,
+    body
+  );
+  next();
+});
 
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
