@@ -2,22 +2,24 @@ const express = require('express');
 const swaggerUI = require('swagger-ui-express');
 const path = require('path');
 const YAML = require('yamljs');
-const { INTERNAL_SERVER_ERROR, getStatusText } = require('http-status-codes');
+const {
+  INTERNAL_SERVER_ERROR,
+  NOT_IMPLEMENTED,
+  getStatusText
+} = require('http-status-codes');
 const db = require('./db');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
 const userRouter = require('./resources/users/user.router');
 const logger = require('./common/logger');
 
-// To check this please uncomment line 18
+// To check this please uncomment line 20
 process.on('uncaughtException', error => {
-  logger.error('Process error:', { message: error.message }, error, () =>
-    process.exit(1)
-  );
+  logger.error('Process error:', { message: error.message });
 });
 //throw Error('Oops!');
 
-// To check this please uncomment line 24
+// To check this please uncomment line 26
 process.on('unhandledRejection', message => {
   logger.error('Unhandled rejection:', { message });
 });
@@ -43,9 +45,9 @@ app.use((req, res, next) => {
   );
   next();
 });
-// To check this please uncomment line 33
+// To check this please uncomment line 35
 app.use((err, req, res, next) => {
-  logger.error(`App error: ${err.message}`, err.message);
+  logger.error('App error:', { message: err.message });
   res.status(INTERNAL_SERVER_ERROR).send(getStatusText(INTERNAL_SERVER_ERROR));
 });
 
@@ -60,5 +62,8 @@ app.use('/', (req, res, next) => {
 app.use('/boards', boardRouter);
 app.use('/boards', taskRouter);
 app.use('/users', userRouter);
+app.use('*', (req, res) =>
+  res.status(NOT_IMPLEMENTED).send(getStatusText(NOT_IMPLEMENTED))
+);
 
 module.exports = app;

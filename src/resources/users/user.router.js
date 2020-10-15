@@ -1,8 +1,10 @@
 const router = require('express').Router();
+const { CREATED, BAD_REQUEST, NOT_FOUND } = require('http-status-codes');
 const User = require('./user.model');
 const usersService = require('./user.service');
 const validateUser = require('./user.validator');
 const messages = require('./user.messages');
+const { catchError } = require('../../common/util');
 
 router
   .route('/')
@@ -12,11 +14,11 @@ router
     res.json(users.map(User.toResponse));
   })
   .post((req, res) => {
-    const userData = req.body;
+    const userData = { ...req.body };
     validateUser(userData, res);
 
     const user = usersService.create(userData);
-    res.json(User.toResponse(user));
+    res.status(CREATED).json(User.toResponse(user));
   });
 
 router
@@ -29,27 +31,28 @@ router
     res.json(User.toResponse(user));
   })
   .put((req, res) => {
-    const userId = req.params.id;
-    const userData = req.body;
+    const userData = { ...req.body };
     validateUser(userData, res);
 
-    const freshUser = usersService.update(userId, userData);
+    const freshUser = usersService.update(req.params.id, userData);
     res.json(User.toResponse(freshUser));
   })
-  .delete((req, res) => {
-    const userId = req.params.id;
-    usersService.remove(userId);
-    res.end();
-  });
+  .delete(
+    catchError((req, res, next) => {
+      const userId = req.params.id;
+      usersService.remove(userId);
+      res.end();
+    })
+  );
 
 router.param('id', (req, res, next, id) => {
   if (!id) {
-    res.status(404).send(messages.idRequired);
+    res.status(BAD_REQUEST).send(messages.idRequired);
   }
 
   const user = usersService.getById(id);
   if (!user) {
-    res.status(404).send(messages.notFound);
+    res.status(NOT_FOUND).send(messages.notFound);
   } else {
     next();
   }
