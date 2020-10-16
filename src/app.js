@@ -45,11 +45,6 @@ app.use((req, res, next) => {
   );
   next();
 });
-// To check this please uncomment line 35
-app.use((err, req, res, next) => {
-  logger.error('App error:', { message: err.message });
-  res.status(INTERNAL_SERVER_ERROR).send(getStatusText(INTERNAL_SERVER_ERROR));
-});
 
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use('/', (req, res, next) => {
@@ -65,5 +60,11 @@ app.use('/users', userRouter);
 app.use('*', (req, res) =>
   res.status(NOT_IMPLEMENTED).send(getStatusText(NOT_IMPLEMENTED))
 );
+
+// To check this please uncomment line 35
+app.use((err, req, res, next) => {
+  logger.error('App error:', { message: err.message });
+  res.status(INTERNAL_SERVER_ERROR).send(getStatusText(INTERNAL_SERVER_ERROR));
+});
 
 module.exports = app;

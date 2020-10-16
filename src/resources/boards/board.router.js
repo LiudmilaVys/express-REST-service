@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { CREATED, BAD_REQUEST, NOT_FOUND } = require('http-status-codes');
+const { OK, BAD_REQUEST, NOT_FOUND } = require('http-status-codes');
 const Board = require('./board.model');
 const boardsService = require('./board.service');
 const validateBoard = require('./board.validator');
@@ -17,7 +17,7 @@ router
     validateBoard(boardData, res);
 
     const board = boardsService.create(boardData);
-    res.status(CREATED).json(Board.toResponse(board));
+    res.status(OK).json(Board.toResponse(board));
   });
 
 router

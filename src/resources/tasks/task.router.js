@@ -1,5 +1,5 @@
 const router = require('express').Router({ mergeParams: true });
-const { CREATED, BAD_REQUEST, NOT_FOUND } = require('http-status-codes');
+const { OK, BAD_REQUEST, NOT_FOUND } = require('http-status-codes');
 const boardRouter = require('../boards/board.router');
 const Task = require('./task.model');
 const tasksService = require('./task.service');
@@ -21,7 +21,7 @@ router
     validateTask(taskData, res);
 
     const task = tasksService.create(taskData);
-    res.status(CREATED).json(Task.toResponse(task));
+    res.status(OK).json(Task.toResponse(task));
   });
 
 router

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { CREATED, BAD_REQUEST, NOT_FOUND } = require('http-status-codes');
+const { OK, BAD_REQUEST, NOT_FOUND } = require('http-status-codes');
 const User = require('./user.model');
 const usersService = require('./user.service');
 const validateUser = require('./user.validator');
@@ -18,7 +18,7 @@ router
     validateUser(userData, res);
 
     const user = usersService.create(userData);
-    res.status(CREATED).json(User.toResponse(user));
+    res.status(OK).json(User.toResponse(user));
   });
 
 router
