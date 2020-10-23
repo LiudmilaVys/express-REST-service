@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-const db = require('../../db');
+const db = require('../../db/inMemoryDB');
 const Task = require('./task.model');
 
 const getAll = boardId => db.tasks.filter(task => task.boardId == boardId);

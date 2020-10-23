@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-const db = require('../../db');
+const db = require('../../db/inMemoryDB');
 const Board = require('./board.model');
 
 const getAll = () => db.boards.slice(0, db.boards.length);

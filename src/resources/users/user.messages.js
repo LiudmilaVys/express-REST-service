@@ -4,5 +4,5 @@ module.exports = {
   nameRequired: 'User name is required.',
   loginRequired: 'User login is required.',
   passwordRequired: 'User password is required.',
-  duplicated: 'User already exists.'
+  duplicated: 'User with the same name already exists.'
 };

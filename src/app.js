@@ -7,7 +7,8 @@ const {
   NOT_IMPLEMENTED,
   getStatusText
 } = require('http-status-codes');
-const db = require('./db');
+const inMemoryDB = require('./db/inMemoryDB');
+const mongoDB = require('./db/mongoDB');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
 const userRouter = require('./resources/users/user.router');
@@ -25,7 +26,7 @@ process.on('unhandledRejection', message => {
 });
 //Promise.reject('Async operation has failed.');
 
-db.init();
+mongoDB.connect();
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));

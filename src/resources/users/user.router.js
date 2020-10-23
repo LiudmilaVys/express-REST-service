@@ -8,49 +8,57 @@ const { catchError } = require('../../common/util');
 
 router
   .route('/')
-  .get((req, res) => {
-    const users = usersService.getAll();
+  .get(async (req, res) => {
+    const users = await usersService.getAll();
     // map user fields to exclude secret fields like "password"
     res.json(users.map(User.toResponse));
   })
-  .post((req, res) => {
-    const userData = { ...req.body };
-    validateUser(userData, res);
-
-    const user = usersService.create(userData);
-    res.status(OK).json(User.toResponse(user));
-  });
+  .post(
+    async (req, res, next) => {
+      await validateUser({ ...req.body }, res);
+      next();
+    },
+    async (req, res) => {
+      const user = await usersService.create({ ...req.body });
+      res.status(OK).json(User.toResponse(user));
+    }
+  );
 
 router
   .route('/:id')
-  .get((req, res) => {
+  .get(async (req, res) => {
     const userId = req.params.id;
-    const user = usersService.getById(userId);
+    const user = await usersService.getById(userId);
 
     // map user fields to exclude secret fields like "password"
     res.json(User.toResponse(user));
   })
-  .put((req, res) => {
-    const userData = { ...req.body };
-    validateUser(userData, res);
-
-    const freshUser = usersService.update(req.params.id, userData);
-    res.json(User.toResponse(freshUser));
-  })
+  .put(
+    async (req, res, next) => {
+      await validateUser({ ...req.body }, res);
+      next();
+    },
+    async (req, res) => {
+      const freshUser = await usersService.update(req.params.id, {
+        ...req.body
+      });
+      res.json(User.toResponse(freshUser));
+    }
+  )
   .delete(
-    catchError((req, res, next) => {
+    catchError(async (req, res, next) => {
       const userId = req.params.id;
-      usersService.remove(userId);
+      await usersService.remove(userId);
       res.end();
     })
   );
 
-router.param('id', (req, res, next, id) => {
+router.param('id', async (req, res, next, id) => {
   if (!id) {
     res.status(BAD_REQUEST).send(messages.idRequired);
   }
 
-  const user = usersService.getById(id);
+  const user = await usersService.getById(id);
   if (!user) {
     res.status(NOT_FOUND).send(messages.notFound);
   } else {

@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-const db = require('../../db');
+const db = require('../../db/inMemoryDB');
 const User = require('./user.model');
 
 const getAll = () => db.users.slice(0, db.users.length);
