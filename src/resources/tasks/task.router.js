@@ -11,47 +11,56 @@ boardRouter.use('/:boardId/tasks', router);
 
 router
   .route('/')
-  .get((req, res) => {
-    const boardId = req.params.boardId;
-    const tasks = tasksService.getAll(boardId);
-    res.json(tasks.map(Task.toResponse));
-  })
-  .post((req, res) => {
-    const taskData = { ...req.body, boardId: req.params.boardId };
-    validateTask(taskData, res);
-
-    const task = tasksService.create(taskData);
-    res.status(OK).json(Task.toResponse(task));
-  });
+  .get(
+    catchError(async (req, res) => {
+      const boardId = req.params.boardId;
+      const tasks = await tasksService.getAll(boardId);
+      res.json(tasks.map(Task.toResponse));
+    })
+  )
+  .post(
+    validateTask,
+    catchError(async (req, res) => {
+      const task = await tasksService.create({
+        ...req.body,
+        boardId: req.params.boardId
+      });
+      res.status(OK).json(Task.toResponse(task));
+    })
+  );
 
 router
   .route('/:id')
-  .get((req, res) => {
-    const taskId = req.params.id;
-    const task = tasksService.getById(taskId);
-    res.json(Task.toResponse(task));
-  })
-  .put((req, res) => {
-    const taskData = { ...req.body };
-    validateTask(taskData, res);
-
-    const freshTask = tasksService.update(req.params.id, taskData);
-    res.json(Task.toResponse(freshTask));
-  })
-  .delete(
-    catchError((req, res) => {
+  .get(
+    catchError(async (req, res) => {
       const taskId = req.params.id;
-      tasksService.remove(taskId);
+      const task = await tasksService.getById(taskId);
+      res.json(Task.toResponse(task));
+    })
+  )
+  .put(
+    validateTask,
+    catchError(async (req, res) => {
+      const freshTask = await tasksService.update(req.params.id, {
+        ...req.body
+      });
+      res.json(Task.toResponse(freshTask));
+    })
+  )
+  .delete(
+    catchError(async (req, res) => {
+      const taskId = req.params.id;
+      await tasksService.remove(taskId);
       res.end();
     })
   );
 
-router.param('id', (req, res, next, id) => {
+router.param('id', async (req, res, next, id) => {
   if (!id) {
     res.status(BAD_REQUEST).send(messages.idRequired);
   }
 
-  const task = tasksService.getById(id);
+  const task = await tasksService.getById(id);
   if (!task) {
     res.status(NOT_FOUND).send(messages.notFound);
   } else {

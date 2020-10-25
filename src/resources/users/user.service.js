@@ -1,13 +1,13 @@
-const usersDBRepo = require('./user.db.repository');
+const usersRepo = require('./user.db.repository');
 const User = require('./user.model');
 const tasksService = require('../tasks/task.service');
 
-const getAll = () => usersDBRepo.getAll();
+const getAll = () => usersRepo.getAll();
 
-const getById = id => usersDBRepo.getById(id);
+const getById = id => usersRepo.getById(id);
 
 const create = userData =>
-  usersDBRepo.save(
+  usersRepo.save(
     new User({
       name: userData.name,
       login: userData.login,
@@ -16,21 +16,17 @@ const create = userData =>
   );
 
 const update = async (userId, userData) => {
-  const user = await usersDBRepo.getById(userId);
-  user.name = userData.name;
-  user.login = userData.login;
-  user.password = userData.password;
-  await usersDBRepo.update(user);
-  return user;
+  await usersRepo.update({ userId, ...userData });
+  return usersRepo.getById(userId);
 };
 
 const remove = userId => {
   tasksService.removeUser(userId);
-  return usersDBRepo.remove(userId);
+  return usersRepo.remove(userId);
 };
 
 const alreadyExists = async userName => {
-  const user = await usersDBRepo.findByName(userName);
+  const user = await usersRepo.findByName(userName);
   return !!user;
 };
 

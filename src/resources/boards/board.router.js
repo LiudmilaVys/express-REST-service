@@ -8,46 +8,52 @@ const { catchError } = require('../../common/util');
 
 router
   .route('/')
-  .get((req, res) => {
-    const boards = boardsService.getAll();
-    res.json(boards.map(Board.toResponse));
-  })
-  .post((req, res) => {
-    const boardData = { ...req.body };
-    validateBoard(boardData, res);
-
-    const board = boardsService.create(boardData);
-    res.status(OK).json(Board.toResponse(board));
-  });
+  .get(
+    catchError(async (req, res) => {
+      const boards = await boardsService.getAll();
+      res.json(boards.map(Board.toResponse));
+    })
+  )
+  .post(
+    validateBoard,
+    catchError(async (req, res) => {
+      const board = await boardsService.create({ ...req.body });
+      res.status(OK).json(Board.toResponse(board));
+    })
+  );
 
 router
   .route('/:id')
-  .get((req, res) => {
-    const boardId = req.params.id;
-    const board = boardsService.getById(boardId);
-    res.json(Board.toResponse(board));
-  })
-  .put((req, res) => {
-    const boardData = { ...req.body };
-    validateBoard(boardData, res);
-
-    const freshBoard = boardsService.update(req.params.id, boardData);
-    res.json(Board.toResponse(freshBoard));
-  })
-  .delete(
-    catchError((req, res) => {
+  .get(
+    catchError(async (req, res) => {
       const boardId = req.params.id;
-      boardsService.remove(boardId);
+      const board = await boardsService.getById(boardId);
+      res.json(Board.toResponse(board));
+    })
+  )
+  .put(
+    validateBoard,
+    catchError(async (req, res) => {
+      const freshBoard = await boardsService.update(req.params.id, {
+        ...req.body
+      });
+      res.json(Board.toResponse(freshBoard));
+    })
+  )
+  .delete(
+    catchError(async (req, res) => {
+      const boardId = req.params.id;
+      await boardsService.remove(boardId);
       res.end();
     })
   );
 
-router.param('id', (req, res, next, id) => {
+router.param('id', async (req, res, next, id) => {
   if (!id) {
     res.status(BAD_REQUEST).send(messages.idRequired);
   }
 
-  const board = boardsService.getById(id);
+  const board = await boardsService.getById(id);
   if (!board) {
     res.status(NOT_FOUND).send(messages.notFound);
   } else {

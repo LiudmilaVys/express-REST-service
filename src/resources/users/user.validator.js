@@ -2,16 +2,20 @@ const { BAD_REQUEST } = require('http-status-codes');
 const usersService = require('./user.service');
 const messages = require('./user.messages');
 
-module.exports = async (user, res, next) => {
+module.exports = async (req, res, next) => {
+  const user = { ...req.body };
+
   if (!user.name) {
     res.status(BAD_REQUEST).send(messages.nameRequired);
     next('route');
   }
 
-  const userAlreadyExists = await usersService.alreadyExists(user.name);
-  if (userAlreadyExists) {
-    res.status(BAD_REQUEST).send(messages.duplicated);
-    next('route');
+  if (!req.params.id) {
+    const userAlreadyExists = await usersService.alreadyExists(user.name);
+    if (userAlreadyExists) {
+      res.status(BAD_REQUEST).send(messages.duplicated);
+      next('route');
+    }
   }
 
   if (!user.login) {
@@ -23,4 +27,6 @@ module.exports = async (user, res, next) => {
     res.status(BAD_REQUEST).send(messages.passwordRequired);
     next('route');
   }
+
+  next();
 };

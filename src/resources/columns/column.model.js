@@ -8,8 +8,8 @@ class Column {
   }
 
   static toResponse(column) {
-    const { id, title, order } = column;
-    return { id, title, order };
+    const { id, _id, title, order } = column;
+    return { id: _id, title, order };
   }
 }
 

@@ -1,26 +1,32 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
 
-const userSchema = new mongoose.Schema(
+const taskSchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.Types.String,
       default: uuid,
       required: true
     },
-    name: {
+    title: {
       type: mongoose.Schema.Types.String,
       required: true
     },
-    login: {
+    order: {
+      type: mongoose.Schema.Types.Number,
+      required: true
+    },
+    description: mongoose.Schema.Types.String,
+    userId: mongoose.Schema.Types.String,
+    boardId: {
       type: mongoose.Schema.Types.String,
       required: true
     },
-    password: {
+    columnId: {
       type: mongoose.Schema.Types.String,
       required: true
     }
   }
 );
 
-module.exports = userSchema;
+module.exports = taskSchema;

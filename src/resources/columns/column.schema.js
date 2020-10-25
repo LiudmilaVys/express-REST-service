@@ -1,26 +1,22 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
 
-const userSchema = new mongoose.Schema(
+const columnSchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.Types.String,
       default: uuid,
       required: true
     },
-    name: {
+    title: {
       type: mongoose.Schema.Types.String,
       required: true
     },
-    login: {
-      type: mongoose.Schema.Types.String,
-      required: true
-    },
-    password: {
-      type: mongoose.Schema.Types.String,
+    order: {
+      type: mongoose.Schema.Types.Number,
       required: true
     }
   }
 );
 
-module.exports = userSchema;
+module.exports = columnSchema;

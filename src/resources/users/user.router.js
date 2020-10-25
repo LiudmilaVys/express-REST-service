@@ -8,42 +8,45 @@ const { catchError } = require('../../common/util');
 
 router
   .route('/')
-  .get(async (req, res) => {
-    const users = await usersService.getAll();
-    // map user fields to exclude secret fields like "password"
-    res.json(users.map(User.toResponse));
-  })
+  .get(
+    catchError(async (req, res) => {
+      const users = await usersService.getAll();
+      // map user fields to exclude secret fields like "password"
+      res.json(users.map(User.toResponse));
+    })
+  )
   .post(
-    async (req, res, next) => {
-      await validateUser({ ...req.body }, res);
-      next();
-    },
-    async (req, res) => {
+    catchError(async (req, res, next) => {
+      await validateUser(req, res, next);
+    }),
+    catchError(async (req, res) => {
       const user = await usersService.create({ ...req.body });
       res.status(OK).json(User.toResponse(user));
-    }
+    })
   );
 
 router
   .route('/:id')
-  .get(async (req, res) => {
-    const userId = req.params.id;
-    const user = await usersService.getById(userId);
+  .get(
+    catchError(async (req, res) => {
+      const userId = req.params.id;
+      const user = await usersService.getById(userId);
 
-    // map user fields to exclude secret fields like "password"
-    res.json(User.toResponse(user));
-  })
+      // map user fields to exclude secret fields like "password"
+      res.json(User.toResponse(user));
+    })
+  )
   .put(
-    async (req, res, next) => {
-      await validateUser({ ...req.body }, res);
+    catchError(async (req, res, next) => {
+      await validateUser(req, res, next);
       next();
-    },
-    async (req, res) => {
+    }),
+    catchError(async (req, res) => {
       const freshUser = await usersService.update(req.params.id, {
         ...req.body
       });
       res.json(User.toResponse(freshUser));
-    }
+    })
   )
   .delete(
     catchError(async (req, res, next) => {

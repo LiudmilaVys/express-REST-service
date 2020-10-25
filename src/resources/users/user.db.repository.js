@@ -6,9 +6,13 @@ const getAll = () => UserDocument.find({}).exec();
 
 const getById = id => UserDocument.findById(id).exec();
 
-const save = user => UserDocument.create(user);
+const save = user => UserDocument.create(new UserDocument({ ...user }));
 
-const update = user => UserDocument.updateOne({ _id: user.id }, user).exec();
+const update = user =>
+  UserDocument.updateOne(
+    { _id: user.id },
+    { name: user.name, login: user.login, password: user.password }
+  ).exec();
 
 const remove = id => UserDocument.deleteOne({ _id: id }).exec();
 
