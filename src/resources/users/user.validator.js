@@ -7,26 +7,14 @@ module.exports = async (req, res, next) => {
 
   if (!user.name) {
     res.status(BAD_REQUEST).send(messages.nameRequired);
-    next('route');
-  }
-
-  if (!req.params.id) {
+  } else if (!user.login) {
+    res.status(BAD_REQUEST).send(messages.loginRequired);
+  } else if (!user.password) {
+    res.status(BAD_REQUEST).send(messages.passwordRequired);
+  } else if (!req.params.id) {
     const userAlreadyExists = await usersService.alreadyExists(user.name);
     if (userAlreadyExists) {
       res.status(BAD_REQUEST).send(messages.duplicated);
-      next('route');
-    }
-  }
-
-  if (!user.login) {
-    res.status(BAD_REQUEST).send(messages.loginRequired);
-    next('route');
-  }
-
-  if (!user.password) {
-    res.status(BAD_REQUEST).send(messages.passwordRequired);
-    next('route');
-  }
-
-  next();
+    } else next();
+  } else next();
 };

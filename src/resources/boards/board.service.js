@@ -15,11 +15,8 @@ const create = boardData =>
   );
 
 const update = async (boardId, boardData) => {
-  const board = boardsRepo.getById(boardId);
-  board.title = boardData.title;
-  board.columns = boardData.columns;
-  await boardsRepo.update(board);
-  return board;
+  await boardsRepo.update({ boardId, ...boardData });
+  return boardsRepo.getById(boardId);
 };
 
 const remove = async boardId => {

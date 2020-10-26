@@ -9,7 +9,7 @@ const getById = id => BoardDocument.findById(id).exec();
 const save = board => BoardDocument.create(new BoardDocument({ ...board }));
 
 const update = board =>
-  BoardDocument.updateOne({ _id: board.id }, board).exec();
+  BoardDocument.updateOne({ _id: board.id }, { title: board.title }).exec();
 
 const remove = id => BoardDocument.deleteOne({ _id: id }).exec();
 

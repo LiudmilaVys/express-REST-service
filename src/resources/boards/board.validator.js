@@ -8,10 +8,7 @@ module.exports = (req, res, next) => {
 
   if (!board.title) {
     res.status(BAD_REQUEST).send(messages.titleRequired);
-    next('route');
-  }
-
-  if (board.columns && Array.isArray(board.columns)) {
+  } else if (board.columns && Array.isArray(board.columns)) {
     board.columns.forEach(column => {
       validateColumn(column, res, next);
     });

@@ -1,4 +1,4 @@
-const router = require('express').Router({ mergeParams: true });
+const router = require('express').Router({ mergeParams: true, strict: true });
 const { OK, BAD_REQUEST, NOT_FOUND } = require('http-status-codes');
 const boardRouter = require('../boards/board.router');
 const Task = require('./task.model');
@@ -7,13 +7,11 @@ const validateTask = require('./task.validator');
 const messages = require('./task.messages');
 const { catchError } = require('../../common/util');
 
-boardRouter.use('/:boardId/tasks', router);
-
 router
   .route('/')
   .get(
     catchError(async (req, res) => {
-      const boardId = req.params.boardId;
+      const boardId = req.params.id;
       const tasks = await tasksService.getAll(boardId);
       res.json(tasks.map(Task.toResponse));
     })
@@ -23,7 +21,7 @@ router
     catchError(async (req, res) => {
       const task = await tasksService.create({
         ...req.body,
-        boardId: req.params.boardId
+        boardId: req.params.id
       });
       res.status(OK).json(Task.toResponse(task));
     })

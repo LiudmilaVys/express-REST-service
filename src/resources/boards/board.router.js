@@ -1,10 +1,11 @@
-const router = require('express').Router();
+const router = require('express').Router({ strict: true });
 const { OK, BAD_REQUEST, NOT_FOUND } = require('http-status-codes');
 const Board = require('./board.model');
 const boardsService = require('./board.service');
 const validateBoard = require('./board.validator');
 const messages = require('./board.messages');
 const { catchError } = require('../../common/util');
+const taskRouter = require('../tasks/task.router');
 
 router
   .route('/')
@@ -60,5 +61,7 @@ router.param('id', async (req, res, next, id) => {
     next();
   }
 });
+
+router.use('/:id/tasks', taskRouter);
 
 module.exports = router;

@@ -56,7 +56,6 @@ app.use('/', (req, res, next) => {
   next();
 });
 app.use('/boards', boardRouter);
-app.use('/boards', taskRouter);
 app.use('/users', userRouter);
 app.use('*', (req, res) =>
   res.status(NOT_IMPLEMENTED).send(getStatusText(NOT_IMPLEMENTED))

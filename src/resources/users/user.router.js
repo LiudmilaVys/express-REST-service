@@ -16,9 +16,7 @@ router
     })
   )
   .post(
-    catchError(async (req, res, next) => {
-      await validateUser(req, res, next);
-    }),
+    catchError((req, res, next) => validateUser(req, res, next)),
     catchError(async (req, res) => {
       const user = await usersService.create({ ...req.body });
       res.status(OK).json(User.toResponse(user));
@@ -37,10 +35,7 @@ router
     })
   )
   .put(
-    catchError(async (req, res, next) => {
-      await validateUser(req, res, next);
-      next();
-    }),
+    catchError((req, res, next) => validateUser(req, res, next)),
     catchError(async (req, res) => {
       const freshUser = await usersService.update(req.params.id, {
         ...req.body

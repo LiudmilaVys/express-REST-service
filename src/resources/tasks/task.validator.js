@@ -7,16 +7,7 @@ module.exports = (req, res, next) => {
 
   if (!task.title) {
     res.status(BAD_REQUEST).send(messages.titleRequired);
-    next('route');
-  }
-  if (Number.isNaN(task.order)) {
+  } else if (Number.isNaN(Number.parseInt(task.order))) {
     res.status(BAD_REQUEST).send(messages.orderRequired);
-    next('route');
-  }
-  if (Number.isNaN(task.boardId)) {
-    res.status(BAD_REQUEST).send(messages.boardIdRequired);
-    next('route');
-  }
-
-  next();
+  } else next();
 };

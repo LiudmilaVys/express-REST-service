@@ -18,15 +18,8 @@ const create = taskData =>
   );
 
 const update = async (id, taskData) => {
-  const task = await tasksRepo.getById(id);
-  task.title = taskData.title;
-  task.order = taskData.order;
-  task.description = taskData.description;
-  task.userId = taskData.userId;
-  task.boardId = taskData.boardId;
-  task.columnId = taskData.columnId;
-  await tasksRepo.update(task);
-  return task;
+  await tasksRepo.update({ id, ...taskData });
+  return tasksRepo.getById(id);
 };
 
 const remove = id => tasksRepo.remove(id);
