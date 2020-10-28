@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+const config = require('../common/config');
 const logger = require('../common/logger');
 
 const connect = () => {
-  mongoose.connect(process.env.MONGO_CONNECTION_STRING, {
+  mongoose.connect(config.MONGO_CONNECTION_STRING, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
