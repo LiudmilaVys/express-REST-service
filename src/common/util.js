@@ -1,4 +1,4 @@
-const { METHOD_FAILURE, getStatusText } = require('http-status-codes');
+const { METHOD_FAILURE } = require('http-status-codes');
 const logger = require('./logger');
 
 const catchError = fn => (req, res, next) => {
@@ -6,7 +6,7 @@ const catchError = fn => (req, res, next) => {
     return fn(req, res, next);
   } catch (error) {
     logger.error(error.message);
-    res.status(METHOD_FAILURE).send(getStatusText(METHOD_FAILURE));
+    res.sendStatus(METHOD_FAILURE);
   }
 };
 

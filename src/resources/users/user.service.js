@@ -1,19 +1,22 @@
 const usersRepo = require('./user.db.repository');
 const User = require('./user.model');
 const tasksService = require('../tasks/task.service');
+const authService = require('../../common/auth.service');
 
 const getAll = () => usersRepo.getAll();
 
 const getById = id => usersRepo.getById(id);
 
-const create = userData =>
-  usersRepo.save(
+const create = async userData => {
+  const passHash = await authService.encryptPassword(userData.password);
+  return usersRepo.save(
     new User({
       name: userData.name,
       login: userData.login,
-      password: userData.password
+      password: passHash
     })
   );
+};
 
 const update = async (userId, userData) => {
   await usersRepo.update({ userId, ...userData });
@@ -25,10 +28,7 @@ const remove = userId => {
   return usersRepo.remove(userId);
 };
 
-const alreadyExists = async userName => {
-  const user = await usersRepo.findByName(userName);
-  return !!user;
-};
+const getByName = userName => usersRepo.findByName(userName);
 
 module.exports = {
   getAll,
@@ -36,5 +36,5 @@ module.exports = {
   create,
   update,
   remove,
-  alreadyExists
+  getByName
 };
