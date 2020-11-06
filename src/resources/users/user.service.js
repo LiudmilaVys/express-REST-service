@@ -19,7 +19,8 @@ const create = async userData => {
 };
 
 const update = async (userId, userData) => {
-  await usersRepo.update({ userId, ...userData });
+  const passHash = await authService.encryptPassword(userData.password);
+  await usersRepo.update({ userId, ...userData, password: passHash });
   return usersRepo.getById(userId);
 };
 

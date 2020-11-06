@@ -1,4 +1,4 @@
-const { FORBIDDEN } = require('http-status-codes');
+const { FORBIDDEN, BAD_REQUEST } = require('http-status-codes');
 const userService = require('../users/user.service');
 const authService = require('../../common/auth.service');
 const messages = require('./login.messages');

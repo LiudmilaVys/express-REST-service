@@ -32,7 +32,13 @@ const initApp = () =>
 
     app.use(express.json());
     app.use((req, res, next) => {
-      const { method, url, query, body } = req;
+      const { method, url, query } = req;
+      const body = { ...req.body };
+
+      if (body && body.password) {
+        body.password = '******';
+      }
+
       logger.info(
         `method: ${method}, URL: ${url}, query: ${JSON.stringify(
           query
@@ -50,7 +56,7 @@ const initApp = () =>
       const token = req.headers['authorization'];
 
       if (token) {
-        const err = await authService.checkToken(token.replace('Bearer ', ''));
+        const err = authService.checkToken(token.replace('Bearer ', ''));
         if (err) {
           res.sendStatus(UNAUTHORIZED);
         } else next();
